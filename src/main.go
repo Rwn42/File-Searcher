@@ -1,39 +1,29 @@
 package main
 
 import (
+	"File-Search/db"
+	"fmt"
 	"log"
-	"os"
-
-	"github.com/pelletier/go-toml/v2"
+	"net/http"
 )
-
-type Config struct {
-	Port              int
-	Host              string
-	SaveDirectory     string
-	PathFormat        string
-	HostSaveDirectory bool
-}
-
-func loadConfig() Config {
-	var cfg Config
-
-	bytes, err := os.ReadFile("./config.toml")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err = toml.Unmarshal(bytes, &cfg); err != nil {
-		log.Fatal(err)
-	}
-
-	return cfg
-}
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	cfg := loadConfig()
 
-	log.Fatal(cfg)
+	db.Open()
+	db.Create()
+	defer db.Close()
+
+	http.Handle("/", http.FileServer(http.Dir("./public")))
+
+	http.HandleFunc("/upload", uploadRoute)
+	http.HandleFunc("/search", searchRoute)
+
+	if cfg.HostSaveDirectory {
+		http.Handle("/files", http.FileServer(http.Dir(cfg.SaveDirectory)))
+	}
+
+	http.ListenAndServe(":"+fmt.Sprint(cfg.Port), nil)
 }

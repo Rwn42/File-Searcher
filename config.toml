@@ -1,5 +1,4 @@
 host = "localhost"
 port = 3000
 saveDirectory="./files" #where to save the files can be relative or absolute path
-pathFormat="windows"    #save format used for wsl interop options are (windows, linux)
 hostSaveDirectory=true  #if true the frontnend will display links to the searched files instead of just the path

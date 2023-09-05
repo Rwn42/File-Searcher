@@ -11,7 +11,7 @@ Allows the user to upload files to the server with any amount of tags. Any files
 To run the server:
 ```sh
 $ cd src
-$ go build -o ../file_search main.go
+$ go build -o ../file_search
 $ cd ..
 $ ./file_search
 ```
