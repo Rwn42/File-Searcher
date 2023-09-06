@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>File Search</title>
+</head>
+<body>
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+    <section x-data="{queriedTopics: [], searchInput: '', results: [], dateStart: '', dateEnd: '', showDate: false}">
+        <form @submit.prevent="queriedTopics.push(searchInput); searchInput='';results = await sendQuery(queriedTopics, dateStart, dateEnd);">
+            <input type="text" placeholder="Type A Topic Press Enter To Add" id="searchBar" x-model="searchInput" \>
+            <div id="dateSelectionMenu">
+                <label for="showDatePicker">Date Filter</label>
+                <input type="checkbox" name="showDatePicker" x-model="showDate" class="checkbox">
+                <template x-if="showDate">
+                        <input type="date" x-model="dateStart" \>
+                </template>
+                <template x-if="showDate">
+                    <input type="date" x-model="dateEnd" \>
+                </template>
+            </div>
+        </form>
+
+        <div id="queryContainer" class="editable-list">
+            <template x-for="query in queriedTopics">
+                <div class="topic-elem">
+                    <p x-text="query"></p>
+                    <button @click="queriedTopics = queriedTopics.filter(t => t !== query)">&#10006</button>
+                </div>
+            </template>
+        </div>
+        <div id="searchResults">
+            <template x-for="result in results">
+                <div class="search-result">
+                    <a x-bind:href="window.location.href + '/' + result" x-text="result"></a>
+                </div>
+            </template>
+        </div>
+    </section>
+
+    <section x-data="{topics: [], cur_topic: ''}" id="uploadForm">
+        <input type="file" x-ref="fileElement">
+
+        <form @submit.prevent="topics.push(cur_topic); cur_topic = '';">
+            <input type="text" placeholder="Add Topic..." x-model="cur_topic"/>
+            <button type="submit">&#43</button>
+        </form>
+
+        <div id="topicsContainer" class="editable-list">
+            <template x-for="topic in topics">
+                <div class="topic-elem">
+                    <p x-text="topic"></p>
+                    <button @click="topics = topics.filter(t => t !== topic)">&#10006</button>
+                </div>
+            </template>
+        </div>
+
+        <button @click="await uploadFile(topics, $refs.fileElement); topics=[]; $refs.fileElement.value = null;">
+            Upload
+        </button>
+        <!--<button @click="debugData(topics, course, $refs.fileElement)">Log</button> -->
+    </section>
+
+    <script defer src="script.js"></script>
+</body>
+</html>
