@@ -28,4 +28,6 @@ on the right hand side.
 4. To search for files on the server from any device on the LAN use the search bar on the left side of the screen
 
 ## Todo
-use config file to edit index.html on first load to change host_name
+- [ ] ui visual update
+- [ ] fix the ugly query code based on start and end date
+- [ ] frontend code structure needs work (clearing date picker as example)

@@ -28,6 +28,7 @@ func FindFileByTags(db *sql.DB, tags []string, dateStart string, dateEnd string)
 
 	var stmt *sql.Stmt
 	var err error
+
 	if dateEnd == "" || dateStart == "" {
 		stmt, err = db.Prepare("SELECT files.file_path FROM files INNER JOIN file_tag ON file_tag.file_id = files.id WHERE file_tag.tag_id=?")
 	} else {
@@ -41,7 +42,15 @@ func FindFileByTags(db *sql.DB, tags []string, dateStart string, dateEnd string)
 	defer stmt.Close()
 
 	for _, tag_id := range tag_ids {
-		rows, err := stmt.Query(tag_id, dateStart, dateEnd)
+
+		//this is gross
+		var rows *sql.Rows
+		if dateEnd == "" || dateStart == "" {
+			rows, err = stmt.Query(tag_id)
+		} else {
+			rows, err = stmt.Query(tag_id, dateStart, dateEnd)
+		}
+
 		if err != nil {
 			log.Fatal(err)
 		}
