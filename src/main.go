@@ -13,17 +13,13 @@ func main() {
 	cfg := loadConfig()
 
 	db.Open()
-	db.Create()
+	//db.Create() //enable this line to create a new db when the server is run
 	defer db.Close()
 
 	http.Handle("/", http.FileServer(http.Dir("./public")))
 
 	http.HandleFunc("/upload", uploadRoute)
 	http.HandleFunc("/search", searchRoute)
-
-	if cfg.HostSaveDirectory {
-		http.Handle("/files", http.FileServer(http.Dir(cfg.SaveDirectory)))
-	}
 
 	http.ListenAndServe(":"+fmt.Sprint(cfg.Port), nil)
 }

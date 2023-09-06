@@ -8,10 +8,9 @@ import (
 )
 
 type Config struct {
-	Port              int
-	Host              string
-	SaveDirectory     string
-	HostSaveDirectory bool
+	Port          int
+	Host          string
+	SaveDirectory string
 }
 
 var cfg Config
@@ -25,6 +24,8 @@ func loadConfig() Config {
 	if err = toml.Unmarshal(bytes, &cfg); err != nil {
 		log.Fatal(err)
 	}
+
+	os.Mkdir("./public/"+cfg.SaveDirectory, 0755)
 
 	return cfg
 }

@@ -1,4 +1,3 @@
 host = "localhost"
 port = 3000
-saveDirectory="./files" #where to save the files can be relative or absolute path
-hostSaveDirectory=true  #if true the frontnend will display links to the searched files instead of just the path
+saveDirectory="files" #dir name for files (stored in public directory)

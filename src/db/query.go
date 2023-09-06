@@ -10,7 +10,7 @@ import (
 // FindFileByTags returns a map of filepaths to inputted tags that matched
 // example: if file a.txt has tags cat dog horse and the function is called with cat, bison as inputs
 // the map would contain "a.txt": 1 bc only the cat tag matched any files
-func FindFileByTags(db *sql.DB, tags []string) map[string]int {
+func FindFileByTags(db *sql.DB, tags []string, dateStart string, dateEnd string) map[string]int {
 	tag_ids := make([]int64, len(tags))
 
 	//populate tag_ids with all tags that match in our database
@@ -26,14 +26,22 @@ func FindFileByTags(db *sql.DB, tags []string) map[string]int {
 
 	paths := make(map[string]int)
 
-	stmt, err := db.Prepare("SELECT files.file_path FROM files INNER JOIN file_tag ON file_tag.file_id = files.id WHERE file_tag.tag_id=?")
+	var stmt *sql.Stmt
+	var err error
+	if dateEnd == "" || dateStart == "" {
+		stmt, err = db.Prepare("SELECT files.file_path FROM files INNER JOIN file_tag ON file_tag.file_id = files.id WHERE file_tag.tag_id=?")
+	} else {
+		stmt, err = db.Prepare(
+			"SELECT files.file_path FROM files INNER JOIN file_tag ON file_tag.file_id = files.id WHERE file_tag.tag_id=?" +
+				"AND files.created BETWEEN ? AND ?")
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
 	for _, tag_id := range tag_ids {
-		rows, err := stmt.Query(tag_id)
+		rows, err := stmt.Query(tag_id, dateStart, dateEnd)
 		if err != nil {
 			log.Fatal(err)
 		}

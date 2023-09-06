@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS file_tag;
 CREATE TABLE files(
     id INTEGER PRIMARY KEY,
     file_path TEXT UNIQUE NOT NULL,
-    created datetime DEFAULT current_timestamp
+    created DATE DEFAULT CURRENT_DATE
 );
 CREATE TABLE tags (
     id INTEGER NOT NULL PRIMARY KEY,

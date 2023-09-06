@@ -32,8 +32,9 @@ func uploadRoute(w http.ResponseWriter, r *http.Request) {
 	defer fp.Close()
 
 	savePath := cfg.SaveDirectory + "/" + header.Filename
+	createPath := "public/" + savePath
 
-	newFile, err := os.Create(savePath)
+	newFile, err := os.Create(createPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,12 +52,7 @@ func uploadRoute(w http.ResponseWriter, r *http.Request) {
 
 	topics := strings.Split(r.Form.Get("topics"), ",")
 
-	displayPath := savePath
-	if cfg.HostSaveDirectory {
-		displayPath = "/files/" + header.Filename
-	}
-
-	if err := db.InsertFileEntry(db.DB, displayPath, topics); err != nil {
+	if err := db.InsertFileEntry(db.DB, savePath, topics); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(fmt.Sprintf("%s", err)))
 		return
@@ -76,7 +72,7 @@ func searchRoute(w http.ResponseWriter, r *http.Request) {
 	query := urlParams.Get("query")
 	tags := strings.Split(query, ",")
 
-	data := db.FindFileByTags(db.DB, tags)
+	data := db.FindFileByTags(db.DB, tags, urlParams.Get("dateStart"), urlParams.Get("dateEnd"))
 	bytes, err := json.Marshal(Results{len(data), data})
 	if err != nil {
 		log.Fatal(err)

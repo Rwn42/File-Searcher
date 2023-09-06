@@ -1,2 +1,5 @@
 searcher
-.db
+*.db
+
+#name of saveDirectory
+files 
